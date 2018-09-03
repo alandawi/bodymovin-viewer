@@ -1,0 +1,28 @@
+{
+  "name": "bodymovin-vueviewer",
+  "version": "1.0.0",
+  "description": "An internal app to see all your bodymovin files in one place.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "npm run generate && npm run server",
+    "generate": "node server.js",
+    "server": "http-server -d --cors",
+    "watch": "nodemon --watch public/assets --exec npm start"
+  },
+  "keywords": [
+    "bodymovin",
+    "assets",
+    "viewer",
+    "vue",
+    "after",
+    "effects"
+  ],
+  "author": "Alan G. Dawidowicz",
+  "license": "MIT",
+  "dependencies": {
+    "http-server": "^0.11.1",
+    "nodemon": "^1.18.4",
+    "walk": "^2.3.14"
+  }
+}

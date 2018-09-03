@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Bodymovin Viewer</title>
+    <link href='https://fonts.googleapis.com/css?family=Roboto:300,400,500,700|Material+Icons' rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/vuetify/dist/vuetify.min.css" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, minimal-ui">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bodymovin/4.13.0/bodymovin.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.5.17/vue.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vuetify/dist/vuetify.js"></script>
+    <!--
+    https://cdnjs.com/libraries/bodymovin
+
+    https://cdnjs.com/libraries/vue
+    -->
+</head>
+<body>
+    <div id="app">
+            <template>
+            <v-app id="inspire">
+                <v-navigation-drawer
+                    v-model="drawer"
+                    fixed
+                    app
+                >
+                    <v-list dense>
+                        <v-list-tile>
+                            <v-list-tile-content>
+                                <v-list-tile-title>Available assets from directory:</v-list-tile-title>
+                            </v-list-tile-content>
+                        </v-list-tile>
+
+                        <v-list-tile @click="handleClickAsset(image.path)" v-for="image in images" :key="`${image.name}`">
+                            <v-list-tile-action>
+                                <v-icon>insert_drive_file</v-icon>
+                            </v-list-tile-action>
+                            <v-list-tile-content>
+                                <v-list-tile-title>{{image.name}}</v-list-tile-title>
+                            </v-list-tile-content>
+                        </v-list-tile>
+                    </v-list>
+                </v-navigation-drawer>
+                <v-toolbar color="indigo" dark fixed app>
+                    <v-toolbar-side-icon @click.stop="drawer = !drawer"></v-toolbar-side-icon>
+                    <v-toolbar-title>{{title}}</v-toolbar-title>
+                </v-toolbar>
+                <v-content>
+                    <v-container fluid class="pa-0">
+                        <v-layout>
+                        <v-flex text-xs-center>
+                            <div id="bodymovin"></div>
+                        </v-flex>
+                        </v-layout>
+                    </v-container>
+                </v-content>
+            </v-app>
+            </template>
+    </div>
+    <script>
+            var app = new Vue({
+                el: '#app',
+                data: {
+                    images: [],
+                    drawer: true,
+                    title: 'Bodymovin Viewer'
+                },
+                methods: {
+                    handleChangeVersion(selected) {
+                    },
+                    handleClickAsset(assetPath) {
+                        document.getElementById('bodymovin').innerHTML = "";
+
+                        const animData = {
+                            wrapper: document.getElementById('bodymovin'),
+                            animType: 'svg',
+                            loop: true,
+                            prerender: true,
+                            autoplay: true,
+                            path: assetPath
+                        };
+
+                        const anim = bodymovin.loadAnimation(animData);
+                    }
+                },
+                mounted() {
+                    fetch("./files.json")
+                    .then(response => response.json())
+                    .then(json => {
+                        this.images = json;
+                    });
+                }
+            })
+        </script>
+</body>
+</html>
