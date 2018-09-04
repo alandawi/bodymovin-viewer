@@ -5,17 +5,15 @@
     <link href='https://fonts.googleapis.com/css?family=Roboto:300,400,500,700|Material+Icons' rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/vuetify/dist/vuetify.min.css" rel="stylesheet">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, minimal-ui">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/bodymovin/4.13.0/bodymovin.min.js"></script>
+    <!-- <script src="./js/bodymovin/version/4.13.0.js"></script> -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.5.17/vue.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/vuetify/dist/vuetify.js"></script>
-    <!--
-    https://cdnjs.com/libraries/bodymovin
-
-    https://cdnjs.com/libraries/vue
-    -->
     <style>
         .active {
             font-weight: bold;
+        }
+        .comboboxPosition {
+            margin-top: 15px !important;
         }
     </style>
 </head>
@@ -48,6 +46,17 @@
                 <v-toolbar color="indigo" dark fixed app>
                     <v-toolbar-side-icon @click.stop="drawer = !drawer"></v-toolbar-side-icon>
                     <v-toolbar-title>{{title}}</v-toolbar-title>
+                    
+                    <v-spacer></v-spacer>
+
+                    <v-layout row align-center style="max-width: 250px">
+                        <v-select
+                            :items="bodymovinVersions"
+                            label="Change version"
+                            class="comboboxPosition"
+                            @change="onChangeVersion"
+                        ></v-select>
+                    </v-layout>
                 </v-toolbar>
                 <v-content>
                     <v-container fluid class="pa-0">
@@ -68,22 +77,21 @@
                     assets: [],
                     drawer: true,
                     title: 'Bodymovin Viewer',
-                    activeAsset: null
+                    activeAsset: null,
+                    bodymovinVersions: ['4.13.0', '4.11.2', '4.10.0', '4.9.0'],
+                    currentVersion: '4.13.0'
                 },
                 methods: {
                     isActive(assetName) {
                         return this.activeAsset === assetName
                     },
-                    setActive(assetName) {
+                    setActiveAsset(assetName) {
                         this.activeAsset = assetName
-                    },
-                    changeActiveAsset(asset) {
-
                     },
                     handleChangeVersion(selected) {
                     },
                     handleClickAsset(asset) {
-                        this.setActive(asset.name);
+                        this.setActiveAsset(asset.name);
 
                         document.getElementById('bodymovin').innerHTML = "";
 
@@ -97,9 +105,20 @@
                         };
 
                         const anim = bodymovin.loadAnimation(animData);
+                    },
+                    onChangeVersion(version) {
+                        this.currentVersion = version;
+                        
+                        const bodymovinScript = document.getElementById('bodymovinScript');
+                        bodymovinScript.setAttribute('src', './js/bodymovin/version/'+this.currentVersion+'.js')
                     }
                 },
                 mounted() {
+                    let bodymovinScript = document.createElement('script')
+                    bodymovinScript.setAttribute('id', 'bodymovinScript')
+                    bodymovinScript.setAttribute('src', './js/bodymovin/version/'+this.currentVersion+'.js')
+                    document.head.appendChild(bodymovinScript)
+
                     fetch("./files.json")
                     .then(response => response.json())
                     .then(json => {
